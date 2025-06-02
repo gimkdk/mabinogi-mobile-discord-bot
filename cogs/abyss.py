@@ -2,6 +2,8 @@ import discord
 from discord.commands import slash_command, Option
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from .abyss_view import AbyssView
 import re
 
@@ -34,10 +36,12 @@ class Abyss(discord.Cog):
         ctx: discord.ApplicationContext,
         어비스종류=Option(str, "어비스 종류를 선택하세요", choices=["가라앉은 유적", "무너진 제단", "파멸의 전당", "유적,제단,전당" ]),
         난이도=Option(str, "난이도를 선택하세요", choices=["입문", "어려움", "매우어려움", "지옥1", "지옥2"]),
-        모집인원=Option(int, "모집인원 수를 선택하세요", choices=[1, 2, 3, 4]),
+        모집인원=Option(int, "모집인원 수를 선택하세요", choices=[1, 2, 3]),
         출발시간=Option(str, "출발시간을 24시간 형식(예: 00:00)으로 입력하세요", required=True),
         메시지비고=Option(str, "메시지를 선택해주세요", choices=["시간 조율 가능해요", "출발시간까지만 모집합니다"], required=True)
     ):
+        now_seoul = datetime.now(ZoneInfo("Asia/Seoul"))
+        now_seoul_date = now_seoul.strftime("%m월 %d일")
         
         # 출발시간 형식 체크 (HH:mm)
         if not re.match(r"^(?:[01]\d|2[0-3]):[0-5]\d$", str(출발시간)):
@@ -51,7 +55,7 @@ class Abyss(discord.Cog):
 
         try:
             thread = await ctx.channel.create_thread(
-                name=f"어비스 모집({난이도}) - {ctx.author.display_name}",
+                name=f"모집날짜:{now_seoul_date}/어비스 {어비스종류}({난이도})/출발시간:{출발시간} - {ctx.author.display_name}",
                 type=discord.ChannelType.public_thread,
                 auto_archive_duration=1440
             )

@@ -2,6 +2,8 @@ import discord
 from discord.commands import slash_command, Option
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from .glass_raid_view import GlassRaidView
 import re
 
@@ -9,6 +11,7 @@ load_dotenv()  # .env 파일 로드해서 환경변수 등록
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
 
 if SUPABASE_URL is None or SUPABASE_KEY is None:
     raise ValueError("SUPABASE_URL 또는 SUPABASE_KEY 환경변수가 설정되지 않았습니다.")
@@ -34,10 +37,12 @@ class GlassRaid(discord.Cog):
         self, 
         ctx: discord.ApplicationContext,
         난이도=Option(str, "난이도를 입력하세요", choices=["입문", "어려움"]),
-        모집인원=Option(int, "모집인원 수를 입력하세요", choices=[1, 2, 3, 4, 5, 6, 7, 8]),
+        모집인원=Option(int, "모집인원 수를 입력하세요", choices=[1, 2, 3, 4, 5, 6, 7]),
         출발시간=Option(str, "출발시간을 24시간 형식(예: 00:00)으로 입력하세요", required=True),
         메시지비고=Option(str, "메시지를 선택해주세요", choices=["시간 조율 가능해요", "출발시간까지만 모집합니다"], required=True),
     ):
+        now_seoul = datetime.now(ZoneInfo("Asia/Seoul"))
+        now_seoul_date = now_seoul.strftime("%m월 %d일")
         
         # 출발시간 형식 체크 (HH:mm)
         if not re.match(r"^(?:[01]\d|2[0-3]):[0-5]\d$", str(출발시간)):
@@ -51,7 +56,7 @@ class GlassRaid(discord.Cog):
 
         try:
             thread = await ctx.channel.create_thread(
-                name=f"글라스기브넨 {난이도} 모집 - {ctx.author.display_name}",
+                name=f"모집날짜:{now_seoul_date}/글라스기브넨({난이도})/출발시간:{출발시간} - {ctx.author.display_name}",
                 type=discord.ChannelType.public_thread,
                 auto_archive_duration=1440
             )

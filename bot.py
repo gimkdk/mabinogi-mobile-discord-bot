@@ -60,11 +60,13 @@ async def on_ready():
     for r in recruitments:
         try:
             thread = await bot.fetch_channel(int(r['thread_id']))
-            print(thread)
             print(f"[DEBUG] 스레드 ID {r['thread_id']} 가져오기 성공")
 
             if not isinstance(thread, discord.Thread):
                 print(f"⚠️ ID {r['thread_id']}는 스레드가 아닙니다.")
+                continue
+            if thread.locked:
+                print(f"🔒 잠긴 스레드: recruitment_id={r['id']} - 스킵됨")
                 continue
             
             first_message_id = int(r['message_id'])
@@ -82,6 +84,7 @@ async def on_ready():
                 print(f"❓ 알 수 없는 channel_id: {channel_id}")
                 continue
             view.message = message
+            await view.update_embed()
             bot.add_view(view)
             print(f"✅ View 등록: recruitment_id={r['id']}")
 

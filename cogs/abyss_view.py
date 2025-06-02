@@ -31,6 +31,8 @@ class AbyssView(View):
 
     async def update_embed(self):
         # 현재 참여자 목록을 DB에서 가져오기
+        if self.message is None:
+            await self.fetch_message()
         try:
             recruitment_res = self.supabase.table('recruitments')\
                 .select('*')\
@@ -54,7 +56,7 @@ class AbyssView(View):
 
             # 참여자 멘션 문자열 생성
             if participants:
-                mentions = "\n".join([f"• <@{p['discord_id']}>\n" for p in participants])
+                mentions = "\n".join([f"• <@{p['discord_id']}>" for p in participants])
             else:
                 mentions = "• 아직없음"
 
