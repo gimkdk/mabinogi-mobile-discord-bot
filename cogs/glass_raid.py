@@ -22,6 +22,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 GUILD_ID = os.getenv('TARGET_GUILD_ID')
 if GUILD_ID is None:
      raise ValueError("TARGET_GUILD_ID 환경변수가 설정되지 않았습니다.")
+GUILD_ID_INT = int(GUILD_ID)
 
 GLASS_RAID_CHANNEL_ID_STR = os.getenv('GLASS_RAID_CHANNEL_ID')
 if GLASS_RAID_CHANNEL_ID_STR is None:
@@ -32,7 +33,7 @@ class GlassRaid(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(name="글라스기브넨등록", description="글라스 기브넨 모집 등록", guild_ids=[str(os.getenv('TARGET_GUILD_ID'))])
+    @slash_command(name="글라스기브넨등록", description="글라스 기브넨 모집 등록", guild_ids=[GUILD_ID_INT])
     async def register_glass(
         self, 
         ctx: discord.ApplicationContext,

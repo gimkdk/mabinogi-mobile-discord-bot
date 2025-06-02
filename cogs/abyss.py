@@ -21,6 +21,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 GUILD_ID = os.getenv('TARGET_GUILD_ID')
 if GUILD_ID is None:
      raise ValueError("TARGET_GUILD_ID 환경변수가 설정되지 않았습니다.")
+GUILD_ID_INT = int(GUILD_ID)
 ABYSS_CHANNEL_ID_STR = os.getenv('ABYSS_CHANNEL_ID')
 if ABYSS_CHANNEL_ID_STR is None:
     raise ValueError("ABYSS_CHANNEL_ID 환경변수가 설정되지 않았습니다.")
@@ -30,7 +31,7 @@ class Abyss(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(name="어비스등록", description="어비스 모집 등록", guild_ids=[str(os.getenv('TARGET_GUILD_ID'))])
+    @slash_command(name="어비스등록", description="어비스 모집 등록", guild_ids=[GUILD_ID_INT])
     async def register_abyss(
         self, 
         ctx: discord.ApplicationContext,
