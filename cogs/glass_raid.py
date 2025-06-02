@@ -51,7 +51,7 @@ class GlassRaid(discord.Cog):
 
         try:
             thread = await ctx.channel.create_thread(
-                name=f"글라스기브넨({난이도}) 모집 - {ctx.author.display_name}",
+                name=f"글라스기브넨 {난이도} 모집 - {ctx.author.display_name}",
                 type=discord.ChannelType.public_thread,
                 auto_archive_duration=1440
             )
@@ -70,8 +70,6 @@ class GlassRaid(discord.Cog):
             res = supabase.table('recruitments').insert(data).execute()
             recruitment_id = res.data[0]['id']  # 여기서 ID 얻음
             
-            await ctx.defer(ephemeral=True)
-
             embed = discord.Embed(
                 title=f"📢 글라스기브넨({난이도}) 모집!",
                 description=f"🕓 출발시간: {출발시간}",
@@ -101,10 +99,10 @@ class GlassRaid(discord.Cog):
             view = GlassRaidView(supabase, recruitment_id, thread.id, msg.id, self.bot)
             await msg.edit(view=view)
             
-            await ctx.followup.send("모집등록 완료", ephemeral=True)
+            await ctx.respond("모집등록 완료", ephemeral=True)
         except Exception as e:
             print(f"스레드 생성 실패: {e}")
-            await ctx.followup.send("스레드 생성 중 오류가 발생했습니다.", ephemeral=True)
+            await ctx.respond("스레드 생성 중 오류가 발생했습니다.", ephemeral=True)
             return
 
 def setup(bot):
